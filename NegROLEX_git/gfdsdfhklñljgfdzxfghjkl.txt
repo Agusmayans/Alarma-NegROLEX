@@ -1,0 +1,97 @@
+void multiplexacion_reg() 
+.................... { 
+....................         dmin=minr/10; 
+*
+00B3:  MOVF   3D,W
+00B4:  MOVWF  44
+00B5:  MOVLW  0A
+00B6:  MOVWF  45
+00B7:  CALL   081
+00B8:  MOVF   21,W
+00B9:  MOVWF  35
+....................         umin=minr%10; 
+00BA:  MOVF   3D,W
+00BB:  MOVWF  44
+00BC:  MOVLW  0A
+00BD:  MOVWF  45
+00BE:  CALL   081
+00BF:  MOVF   20,W
+00C0:  MOVWF  34
+....................  
+....................         dseg=segr/10; 
+00C1:  MOVF   3C,W
+00C2:  MOVWF  44
+00C3:  MOVLW  0A
+00C4:  MOVWF  45
+00C5:  CALL   081
+00C6:  MOVF   21,W
+00C7:  MOVWF  3E
+....................         useg=segr%10; 
+00C8:  MOVF   3C,W
+00C9:  MOVWF  44
+00CA:  MOVLW  0A
+00CB:  MOVWF  45
+00CC:  CALL   081
+00CD:  MOVF   20,W
+00CE:  MOVWF  3F
+....................         
+....................         if (multiplex==0) 
+00CF:  MOVF   38,F
+00D0:  BTFSS  03.2
+00D1:  GOTO   0D7
+....................         { 
+....................         min2=umin+0b01000000; 
+00D2:  MOVLW  40
+00D3:  ADDWF  34,W
+00D4:  MOVWF  32
+....................         output_c(min2); 
+00D5:  MOVF   32,W
+00D6:  MOVWF  07
+....................         } 
+....................          
+....................         if (multiplex==1) 
+00D7:  DECFSZ 38,W
+00D8:  GOTO   0DE
+....................         { 
+....................         min2=dmin+0b10000000; 
+00D9:  MOVLW  80
+00DA:  ADDWF  35,W
+00DB:  MOVWF  32
+....................         output_c(min2); 
+00DC:  MOVF   32,W
+00DD:  MOVWF  07
+....................         } 
+....................                   
+....................         if (multiplex==2) 
+00DE:  MOVF   38,W
+00DF:  SUBLW  02
+00E0:  BTFSS  03.2
+00E1:  GOTO   0E7
+....................         { 
+....................         seg2=useg+0b00010000; 
+00E2:  MOVLW  10
+00E3:  ADDWF  3F,W
+00E4:  MOVWF  40
+....................         output_c(seg2); 
+00E5:  MOVF   40,W
+00E6:  MOVWF  07
+....................         } 
+....................         
+....................         if (multiplex==3) 
+00E7:  MOVF   38,W
+00E8:  SUBLW  03
+00E9:  BTFSS  03.2
+00EA:  GOTO   0F0
+....................         { 
+....................         seg2=dseg+0b00100000; 
+00EB:  MOVLW  20
+00EC:  ADDWF  3E,W
+00ED:  MOVWF  40
+....................         output_c(seg2); 
+00EE:  MOVF   40,W
+00EF:  MOVWF  07
+....................         } 
+....................          
+....................         output_low(pin_a5);     
+00F0:  BCF    05.5
+.................... } 

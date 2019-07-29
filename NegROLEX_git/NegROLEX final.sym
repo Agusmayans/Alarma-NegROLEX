@@ -1,0 +1,94 @@
+004-005 @WRITE_PROGRAM_MEMORY.P1
+004-005 @READ_PROGRAM_MEMORY.P2
+015     CCP_1_LOW
+015-016 CCP_1
+016     CCP_1_HIGH
+01B     CCP_2_LOW
+01B-01C CCP_2
+01C     CCP_2_HIGH
+020     @SCRATCH
+021     @SCRATCH
+021     _RETURN_
+022     @SCRATCH
+023     @SCRATCH
+024     @SCRATCH
+025     @INTERRUPT_AREA
+026     @INTERRUPT_AREA
+027     @INTERRUPT_AREA
+028     @INTERRUPT_AREA
+029     @INTERRUPT_AREA
+02A     @INTERRUPT_AREA
+02B     @INTERRUPT_AREA
+02C     @INTERRUPT_AREA
+02D     @INTERRUPT_AREA
+02E     seg
+02F     min
+030     horas
+031     ms
+032     min2
+033     horas2
+034     umin
+035     dmin
+036     uhoras
+037     dhoras
+038     multiplex
+039     cont
+03A     horas3
+03B     min3
+03C     segr
+03D     minr
+03E     dseg
+03F     useg
+040     seg2
+041     suma
+042     supercont
+043     traba
+044     @DIV88.P1
+044     jueguembler.@SCRATCH
+044     MAIN.@SCRATCH
+045     @delay_ms1.P1
+045     @DIV88.P2
+046     @DIV88.@SCRATCH
+09C.6   C1OUT
+09C.7   C2OUT
+10D-10E @READ_PROGRAM_MEMORY.P1
+10D-10E @WRITE_PROGRAM_MEMORY.P2
+
+0096  @delay_ms1
+0043  timer1
+0069  timer0
+0072  sumador_piolita
+0134  multiplexacion
+0081  @DIV88
+0172  multiplexacion2
+00B3  multiplexacion_reg
+00AB  jueguembler
+01B1  MAIN
+01B1  @cinit
+007A  cereador
+0076  sumador
+007D  fin
+
+Project Files:
+    NegROLEX final.c
+    ..\..\..\..\Program Files (x86)\PICC\devices\16F873A.h
+
+Units:
+    C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.c (main)
+
+Compiler Settings:
+    Processor:      PIC16F873A
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      0
+    Short,Int,Long: 1,8,16
+
+Output Files:
+    Errors:      C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.err
+    Ext Symbols: C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.esym
+    INHX8:       C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.hex
+    Symbols:     C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.sym
+    List:        C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.lst
+    Debug/COFF:  C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.cof
+    Call Tree:   NegROLEX final.tre
+    Statistics:  NegROLEX final.sta

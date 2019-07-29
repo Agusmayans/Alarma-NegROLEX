@@ -1,0 +1,1007 @@
+CCS PCM C Compiler, Version 4.032, 62930               10-nov.-15 10:58
+
+               Filename: C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.lst
+
+               ROM used: 616 words (15%)
+                         Largest free fragment is 2048
+               RAM used: 38 (20%) at main() level
+                         40 (21%) worst case
+               Stack:    3 worst case (2 in main + 1 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   1B1
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  26
+0008:  MOVF   7F,W
+0009:  MOVWF  25
+000A:  MOVF   0A,W
+000B:  MOVWF  2D
+000C:  CLRF   0A
+000D:  SWAPF  25,F
+000E:  MOVF   04,W
+000F:  MOVWF  27
+0010:  MOVF   20,W
+0011:  MOVWF  28
+0012:  MOVF   21,W
+0013:  MOVWF  29
+0014:  MOVF   22,W
+0015:  MOVWF  2A
+0016:  MOVF   23,W
+0017:  MOVWF  2B
+0018:  MOVF   24,W
+0019:  MOVWF  2C
+001A:  BCF    03.7
+001B:  BCF    03.5
+001C:  BTFSS  0B.4
+001D:  GOTO   020
+001E:  BTFSC  0B.1
+001F:  GOTO   03D
+0020:  MOVLW  8C
+0021:  MOVWF  04
+0022:  BTFSS  00.0
+0023:  GOTO   026
+0024:  BTFSC  0C.0
+0025:  GOTO   03F
+0026:  BTFSS  0B.5
+0027:  GOTO   02A
+0028:  BTFSC  0B.2
+0029:  GOTO   041
+002A:  MOVF   27,W
+002B:  MOVWF  04
+002C:  MOVF   28,W
+002D:  MOVWF  20
+002E:  MOVF   29,W
+002F:  MOVWF  21
+0030:  MOVF   2A,W
+0031:  MOVWF  22
+0032:  MOVF   2B,W
+0033:  MOVWF  23
+0034:  MOVF   2C,W
+0035:  MOVWF  24
+0036:  MOVF   2D,W
+0037:  MOVWF  0A
+0038:  SWAPF  26,W
+0039:  MOVWF  03
+003A:  SWAPF  7F,F
+003B:  SWAPF  7F,W
+003C:  RETFIE
+003D:  BCF    0A.3
+003E:  GOTO   072
+003F:  BCF    0A.3
+0040:  GOTO   043
+0041:  BCF    0A.3
+0042:  GOTO   069
+.................... //NegROLEX : RELOJ "BOMBA" DESARROLLADO POR EL GRUPO 8 
+.................... //este grabar siempre en integrado 3 
+.................... #INCLUDE <16F873A.h>//incluye la biblioteca del pic 
+.................... //////// Standard Header file for the PIC16F873A device //////////////// 
+.................... #device PIC16F873A 
+.................... #list 
+....................  
+.................... #FUSES XT,NOWDT //indicas que el osc es de cristal y desactivas el watch doge 
+.................... #USE DELAY (CLOCK=4000000)//pones la frec ext de cristal 
+0096:  MOVLW  45
+0097:  MOVWF  04
+0098:  BCF    03.7
+0099:  MOVF   00,W
+009A:  BTFSC  03.2
+009B:  GOTO   0AA
+009C:  MOVLW  01
+009D:  MOVWF  21
+009E:  CLRF   20
+009F:  DECFSZ 20,F
+00A0:  GOTO   09F
+00A1:  DECFSZ 21,F
+00A2:  GOTO   09E
+00A3:  MOVLW  4A
+00A4:  MOVWF  20
+00A5:  DECFSZ 20,F
+00A6:  GOTO   0A5
+00A7:  GOTO   0A8
+00A8:  DECFSZ 00,F
+00A9:  GOTO   09C
+00AA:  RETLW  00
+.................... #USE FAST_IO(A)//pones que vas a usar los puertos  
+.................... #USE FAST_IO(B) 
+.................... #USE FAST_IO(C) 
+....................  
+....................  
+.................... //ENTRADA ES 1  -  SALIDA ES 0 NO TE OLVIDES 
+....................  
+.................... int seg=0, min=0, horas=0, ms=0, min2, horas2, umin, dmin, uhoras, dhoras, multiplex=0;//estas son las variables globales 
+*
+01BC:  BCF    03.5
+01BD:  CLRF   2E
+01BE:  CLRF   2F
+01BF:  CLRF   30
+01C0:  CLRF   31
+01C1:  CLRF   38
+.................... int cont=0, horas3=10, min3=30, segr, minr, dseg, useg, seg2, suma=0, supercont, traba; 
+01C2:  CLRF   39
+01C3:  MOVLW  0A
+01C4:  MOVWF  3A
+01C5:  MOVLW  1E
+01C6:  MOVWF  3B
+01C7:  CLRF   41
+....................  
+.................... #int_timer1 //apartir de aca escribis la funcion  
+.................... void timer1() //escribis el nombre y tipo de la funcion  
+.................... {                     
+....................        ms=ms+1;//aumentas la variable ms en 1 
+*
+0043:  MOVLW  01
+0044:  ADDWF  31,F
+....................         
+....................    if (ms == 4) //preguntas si ms es = a 4 
+0045:  MOVF   31,W
+0046:  SUBLW  04
+0047:  BTFSS  03.2
+0048:  GOTO   04E
+....................         { 
+....................             seg++; //aumenta los seg 
+0049:  INCF   2E,F
+....................             segr--; //disminuye los seg 
+004A:  DECF   3C,F
+....................             ms=0;  //reinicia la variable seg 
+004B:  CLRF   31
+....................             output_toggle(pin_a5); //cambias el estado del pin a5 (los puntitos del medio) 
+004C:  MOVLW  20
+004D:  XORWF  05,F
+....................         } 
+....................    if (segr == (-1)) 
+004E:  MOVF   3C,W
+004F:  SUBLW  FF
+0050:  BTFSS  03.2
+0051:  GOTO   055
+....................         { 
+....................             minr--; 
+0052:  DECF   3D,F
+....................             segr=59; 
+0053:  MOVLW  3B
+0054:  MOVWF  3C
+....................         } 
+....................    if (seg==57) //if encargado de aumentar los min 
+0055:  MOVF   2E,W
+0056:  SUBLW  39
+0057:  BTFSS  03.2
+0058:  GOTO   05B
+....................         { 
+....................             min++; //aumenta los min 
+0059:  INCF   2F,F
+....................             seg=0; //reseta la variabke seg 
+005A:  CLRF   2E
+....................         } 
+....................    if (min == 60) //if encargado de aumentar las horas 
+005B:  MOVF   2F,W
+005C:  SUBLW  3C
+005D:  BTFSS  03.2
+005E:  GOTO   061
+....................         { 
+....................             horas++; //aumenta las horas 
+005F:  INCF   30,F
+....................             min=0;   //resetea la variable min 
+0060:  CLRF   2F
+....................         }         
+....................          
+....................    if (horas == 24) //if encargado de resetear la variable horas 
+0061:  MOVF   30,W
+0062:  SUBLW  18
+0063:  BTFSS  03.2
+0064:  GOTO   066
+....................         { 
+....................             horas=0; //resetea la variable horas 
+0065:  CLRF   30
+....................         } 
+....................  
+.................... } 
+....................  
+0066:  BCF    0C.0
+0067:  BCF    0A.3
+0068:  GOTO   02A
+.................... #int_timer0 // a partir de aca pones la funcion q va a hacer 
+.................... void timer0() //escribis el tipo y nombre de la funcion 
+.................... { 
+....................    multiplex++; //aumenta en 1 la variable multiplex 
+0069:  INCF   38,F
+....................  
+....................    if (multiplex==4) //pregunta si multiplex es 4 
+006A:  MOVF   38,W
+006B:  SUBLW  04
+006C:  BTFSS  03.2
+006D:  GOTO   06F
+....................    { 
+....................    multiplex=0; //reinicia multiplex 
+006E:  CLRF   38
+....................    } 
+.................... } 
+....................  
+006F:  BCF    0B.2
+0070:  BCF    0A.3
+0071:  GOTO   02A
+.................... #int_ext 
+.................... void sumador_piolita() 
+.................... { 
+.................... #ASM 
+....................           movlw    2      //cargo w con 2 
+0072:  MOVLW  02
+....................           sublw    suma       //le resto w a suma 
+0073:  SUBLW  41
+....................           btfss    03,2   //pregunta si la resta da 0 o no 
+0074:  BTFSS  03.2
+....................           goto     cereador    //si no da 0 tengo que llegar a 2 en suma 
+0075:  GOTO   07A
+....................           sumador:  
+....................           movlw    1       //cargo w con 1 
+0076:  MOVLW  01
+....................           movwf    suma     //cargo a suma con 1 activando la interrupcion 
+0077:  MOVWF  41
+....................           bcf      0x0B,1   //limpio el flag de la interrupcion 
+0078:  BCF    0B.1
+....................           goto     fin     //termina la interrupcion 
+0079:  GOTO   07D
+....................           cereador:          //esta subrutina pone en 0 la variable 
+....................           movlw    0 
+007A:  MOVLW  00
+....................           movwf    suma 
+007B:  MOVWF  41
+....................           goto     sumador    //aca termina la subrutina y le suma un 1 para activar la interrupcion 
+007C:  GOTO   076
+....................           fin:       
+....................           RETFIE 
+007D:  RETFIE
+.................... #ENDASM 
+....................            
+.................... } 
+....................  
+....................  
+007E:  BCF    0B.1
+007F:  BCF    0A.3
+0080:  GOTO   02A
+.................... void multiplexacion() //esta funcion se encargade multiplexar los displays 
+.................... {  
+....................  
+....................         dmin=min/10; //dmin pasa a ser el la decena de los min 
+*
+0134:  MOVF   2F,W
+0135:  MOVWF  44
+0136:  MOVLW  0A
+0137:  MOVWF  45
+0138:  CALL   081
+0139:  MOVF   21,W
+013A:  MOVWF  35
+....................         umin=min%10; //umin pasa a ser la unidad de los min 
+013B:  MOVF   2F,W
+013C:  MOVWF  44
+013D:  MOVLW  0A
+013E:  MOVWF  45
+013F:  CALL   081
+0140:  MOVF   20,W
+0141:  MOVWF  34
+....................  
+....................         dhoras=horas/10; //dhoras pasa a ser el la decena de los horas 
+0142:  MOVF   30,W
+0143:  MOVWF  44
+0144:  MOVLW  0A
+0145:  MOVWF  45
+0146:  CALL   081
+0147:  MOVF   21,W
+0148:  MOVWF  37
+....................         uhoras=horas%10; //uhoras pasa a ser la unidad de los horas 
+0149:  MOVF   30,W
+014A:  MOVWF  44
+014B:  MOVLW  0A
+014C:  MOVWF  45
+014D:  CALL   081
+014E:  MOVF   20,W
+014F:  MOVWF  36
+....................          
+....................         if (multiplex==0) //pregunta si multiplex es 0 
+0150:  MOVF   38,F
+0151:  BTFSS  03.2
+0152:  GOTO   158
+....................         { 
+....................         min2=umin+0b00010000; //le suma a la variable el bit de multiplexacion correspondiente 
+0153:  MOVLW  10
+0154:  ADDWF  34,W
+0155:  MOVWF  32
+....................         output_c(min2); //mandas el dato al display 
+0156:  MOVF   32,W
+0157:  MOVWF  07
+....................         } 
+....................          
+....................         if (multiplex==1) //pregunta si multiplex es 1 
+0158:  DECFSZ 38,W
+0159:  GOTO   15F
+....................         { 
+....................         min2=dmin+0b00100000; //le suma a la variable el bit de multiplexacion correspondiente 
+015A:  MOVLW  20
+015B:  ADDWF  35,W
+015C:  MOVWF  32
+....................         output_c(min2); //mandas el dato al display 
+015D:  MOVF   32,W
+015E:  MOVWF  07
+....................         } 
+....................                 
+....................          
+....................         if (multiplex==2) //pregunta si multiplex es 2 
+015F:  MOVF   38,W
+0160:  SUBLW  02
+0161:  BTFSS  03.2
+0162:  GOTO   168
+....................         { 
+....................         horas2=uhoras+0b01000000; //le suma a la variable el bit de multiplexacion correspondiente 
+0163:  MOVLW  40
+0164:  ADDWF  36,W
+0165:  MOVWF  33
+....................         output_c(horas2); //mandas el dato al display 
+0166:  MOVF   33,W
+0167:  MOVWF  07
+....................         } 
+....................         
+....................         if (multiplex==3) //pregunta si multiplex es 3 
+0168:  MOVF   38,W
+0169:  SUBLW  03
+016A:  BTFSS  03.2
+016B:  GOTO   171
+....................         { 
+....................         horas2=dhoras+0b10000000; //le suma a la variable el bit de multiplexacion correspondiente 
+016C:  MOVLW  80
+016D:  ADDWF  37,W
+016E:  MOVWF  33
+....................         output_c(horas2); //mandas el dato al display 
+016F:  MOVF   33,W
+0170:  MOVWF  07
+....................         }            
+.................... }    
+0171:  RETLW  00
+....................  
+.................... void multiplexacion2() //es la funcion de muktiplexacion para la alarma 
+.................... {    
+....................      
+....................         dmin=min3/10; 
+0172:  MOVF   3B,W
+0173:  MOVWF  44
+0174:  MOVLW  0A
+0175:  MOVWF  45
+0176:  CALL   081
+0177:  MOVF   21,W
+0178:  MOVWF  35
+....................         umin=min3%10; 
+0179:  MOVF   3B,W
+017A:  MOVWF  44
+017B:  MOVLW  0A
+017C:  MOVWF  45
+017D:  CALL   081
+017E:  MOVF   20,W
+017F:  MOVWF  34
+....................  
+....................         dhoras=horas3/10; 
+0180:  MOVF   3A,W
+0181:  MOVWF  44
+0182:  MOVLW  0A
+0183:  MOVWF  45
+0184:  CALL   081
+0185:  MOVF   21,W
+0186:  MOVWF  37
+....................         uhoras=horas3%10; 
+0187:  MOVF   3A,W
+0188:  MOVWF  44
+0189:  MOVLW  0A
+018A:  MOVWF  45
+018B:  CALL   081
+018C:  MOVF   20,W
+018D:  MOVWF  36
+....................          
+....................         if (multiplex==0) 
+018E:  MOVF   38,F
+018F:  BTFSS  03.2
+0190:  GOTO   196
+....................         { 
+....................         min2=umin+0b00010000; 
+0191:  MOVLW  10
+0192:  ADDWF  34,W
+0193:  MOVWF  32
+....................         output_c(min2); 
+0194:  MOVF   32,W
+0195:  MOVWF  07
+....................         } 
+....................          
+....................         if (multiplex==1) 
+0196:  DECFSZ 38,W
+0197:  GOTO   19D
+....................         { 
+....................         min2=dmin+0b00100000; 
+0198:  MOVLW  20
+0199:  ADDWF  35,W
+019A:  MOVWF  32
+....................         output_c(min2); 
+019B:  MOVF   32,W
+019C:  MOVWF  07
+....................         } 
+....................                   
+....................         if (multiplex==2) 
+019D:  MOVF   38,W
+019E:  SUBLW  02
+019F:  BTFSS  03.2
+01A0:  GOTO   1A6
+....................         { 
+....................         horas2=uhoras+0b01000000; 
+01A1:  MOVLW  40
+01A2:  ADDWF  36,W
+01A3:  MOVWF  33
+....................         output_c(horas2); 
+01A4:  MOVF   33,W
+01A5:  MOVWF  07
+....................         } 
+....................         
+....................         if (multiplex==3) 
+01A6:  MOVF   38,W
+01A7:  SUBLW  03
+01A8:  BTFSS  03.2
+01A9:  GOTO   1AF
+....................         { 
+....................         horas2=dhoras+0b10000000; 
+01AA:  MOVLW  80
+01AB:  ADDWF  37,W
+01AC:  MOVWF  33
+....................         output_c(horas2); 
+01AD:  MOVF   33,W
+01AE:  MOVWF  07
+....................         } 
+....................          
+....................         output_low(pin_a5);     
+01AF:  BCF    05.5
+.................... }        
+01B0:  RETLW  00
+....................  
+.................... void multiplexacion_reg() 
+.................... { 
+....................         dmin=minr/10; 
+*
+00B3:  MOVF   3D,W
+00B4:  MOVWF  44
+00B5:  MOVLW  0A
+00B6:  MOVWF  45
+00B7:  CALL   081
+00B8:  MOVF   21,W
+00B9:  MOVWF  35
+....................         umin=minr%10; 
+00BA:  MOVF   3D,W
+00BB:  MOVWF  44
+00BC:  MOVLW  0A
+00BD:  MOVWF  45
+00BE:  CALL   081
+00BF:  MOVF   20,W
+00C0:  MOVWF  34
+....................  
+....................         dseg=segr/10; 
+00C1:  MOVF   3C,W
+00C2:  MOVWF  44
+00C3:  MOVLW  0A
+00C4:  MOVWF  45
+00C5:  CALL   081
+00C6:  MOVF   21,W
+00C7:  MOVWF  3E
+....................         useg=segr%10; 
+00C8:  MOVF   3C,W
+00C9:  MOVWF  44
+00CA:  MOVLW  0A
+00CB:  MOVWF  45
+00CC:  CALL   081
+00CD:  MOVF   20,W
+00CE:  MOVWF  3F
+....................         
+....................         if (multiplex==0) 
+00CF:  MOVF   38,F
+00D0:  BTFSS  03.2
+00D1:  GOTO   0D7
+....................         { 
+....................         min2=umin+0b01000000; 
+00D2:  MOVLW  40
+00D3:  ADDWF  34,W
+00D4:  MOVWF  32
+....................         output_c(min2); 
+00D5:  MOVF   32,W
+00D6:  MOVWF  07
+....................         } 
+....................          
+....................         if (multiplex==1) 
+00D7:  DECFSZ 38,W
+00D8:  GOTO   0DE
+....................         { 
+....................         min2=dmin+0b10000000; 
+00D9:  MOVLW  80
+00DA:  ADDWF  35,W
+00DB:  MOVWF  32
+....................         output_c(min2); 
+00DC:  MOVF   32,W
+00DD:  MOVWF  07
+....................         } 
+....................                   
+....................         if (multiplex==2) 
+00DE:  MOVF   38,W
+00DF:  SUBLW  02
+00E0:  BTFSS  03.2
+00E1:  GOTO   0E7
+....................         { 
+....................         seg2=useg+0b00010000; 
+00E2:  MOVLW  10
+00E3:  ADDWF  3F,W
+00E4:  MOVWF  40
+....................         output_c(seg2); 
+00E5:  MOVF   40,W
+00E6:  MOVWF  07
+....................         } 
+....................         
+....................         if (multiplex==3) 
+00E7:  MOVF   38,W
+00E8:  SUBLW  03
+00E9:  BTFSS  03.2
+00EA:  GOTO   0F0
+....................         { 
+....................         seg2=dseg+0b00100000; 
+00EB:  MOVLW  20
+00EC:  ADDWF  3E,W
+00ED:  MOVWF  40
+....................         output_c(seg2); 
+00EE:  MOVF   40,W
+00EF:  MOVWF  07
+....................         } 
+....................          
+....................         output_low(pin_a5);     
+00F0:  BCF    05.5
+.................... } 
+....................  
+.................... void jueguembler() 
+.................... { 
+....................  minr=0; 
+*
+00AB:  CLRF   3D
+....................  segr=30; 
+00AC:  MOVLW  1E
+00AD:  MOVWF  3C
+....................  supercont=0; 
+00AE:  CLRF   42
+....................   
+.................... while(supercont==0) 
+....................  { 
+00AF:  MOVF   42,F
+00B0:  BTFSS  03.2
+00B1:  GOTO   132
+....................  traba=0; 
+00B2:  CLRF   43
+....................  multiplexacion_reg(); 
+....................  if (minr==0 && segr==0) 
+*
+00F1:  MOVF   3D,F
+00F2:  BTFSS  03.2
+00F3:  GOTO   106
+00F4:  MOVF   3C,F
+00F5:  BTFSS  03.2
+00F6:  GOTO   106
+....................   {   
+....................     while (traba==0) 
+....................     { 
+00F7:  MOVF   43,F
+00F8:  BTFSS  03.2
+00F9:  GOTO   106
+....................      output_toggle(pin_a1); 
+00FA:  MOVLW  02
+00FB:  XORWF  05,F
+....................      delay_ms(250); 
+00FC:  MOVLW  FA
+00FD:  MOVWF  45
+00FE:  CALL   096
+....................      if (input(pin_b5)==0) 
+00FF:  BTFSC  06.5
+0100:  GOTO   105
+....................       { 
+....................        suma++;   
+0101:  INCF   41,F
+....................        supercont++; 
+0102:  INCF   42,F
+....................        traba++; 
+0103:  INCF   43,F
+....................        output_low(pin_a1); 
+0104:  BCF    05.1
+....................       } 
+....................     } 
+0105:  GOTO   0F7
+....................   } 
+....................  if (input(pin_b3)==0) 
+0106:  BTFSC  06.3
+0107:  GOTO   119
+....................   { 
+....................     segr=segr-2; 
+0108:  MOVLW  02
+0109:  SUBWF  3C,F
+....................     while (traba==0) 
+....................     { 
+010A:  MOVF   43,F
+010B:  BTFSS  03.2
+010C:  GOTO   119
+....................      output_toggle(pin_a1); 
+010D:  MOVLW  02
+010E:  XORWF  05,F
+....................      delay_ms(250); 
+010F:  MOVLW  FA
+0110:  MOVWF  45
+0111:  CALL   096
+....................      if (input(pin_b4)==0) 
+0112:  BTFSC  06.4
+0113:  GOTO   118
+....................       { 
+....................        suma++;   
+0114:  INCF   41,F
+....................        supercont++; 
+0115:  INCF   42,F
+....................        traba++; 
+0116:  INCF   43,F
+....................        output_low(pin_a1); 
+0117:  BCF    05.1
+....................       } 
+....................     } 
+0118:  GOTO   10A
+....................   } 
+....................  if (input(pin_b4)==0) 
+0119:  BTFSC  06.4
+011A:  GOTO   11E
+....................   { 
+....................      suma++;   
+011B:  INCF   41,F
+....................      supercont++; 
+011C:  INCF   42,F
+....................      output_low(pin_a1); 
+011D:  BCF    05.1
+....................   } 
+....................  if (input(pin_b5)==0) 
+011E:  BTFSC  06.5
+011F:  GOTO   131
+....................   { 
+....................     segr=segr-10; 
+0120:  MOVLW  0A
+0121:  SUBWF  3C,F
+....................     while (traba==0) 
+....................     { 
+0122:  MOVF   43,F
+0123:  BTFSS  03.2
+0124:  GOTO   131
+....................      output_toggle(pin_a1); 
+0125:  MOVLW  02
+0126:  XORWF  05,F
+....................      delay_ms(250); 
+0127:  MOVLW  FA
+0128:  MOVWF  45
+0129:  CALL   096
+....................      if (input(pin_b3)==0) 
+012A:  BTFSC  06.3
+012B:  GOTO   130
+....................       { 
+....................        suma++;   
+012C:  INCF   41,F
+....................        supercont++; 
+012D:  INCF   42,F
+....................        traba++; 
+012E:  INCF   43,F
+....................        output_low(pin_a1); 
+012F:  BCF    05.1
+....................       } 
+....................     } 
+0130:  GOTO   122
+....................   } 
+....................  } 
+0131:  GOTO   0AF
+.................... } 
+0132:  BCF    0A.3
+0133:  GOTO   1E9 (RETURN)
+.................... void main() 
+.................... { 
+*
+01B1:  CLRF   04
+01B2:  BCF    03.7
+01B3:  MOVLW  1F
+01B4:  ANDWF  03,F
+01B5:  BSF    03.5
+01B6:  BSF    1F.0
+01B7:  BSF    1F.1
+01B8:  BSF    1F.2
+01B9:  BCF    1F.3
+01BA:  MOVLW  07
+01BB:  MOVWF  1C
+....................    SET_TRIS_C(0b00000000); //seteas las I/O del puerto C 
+*
+01C8:  MOVLW  00
+01C9:  BSF    03.5
+01CA:  MOVWF  07
+....................    SET_TRIS_B(0b11111111); //seteas las I/O del puerto B 
+01CB:  MOVLW  FF
+01CC:  MOVWF  06
+....................    SET_TRIS_A(0b001101);   //seteas las I/O del puerto A 
+01CD:  MOVLW  0D
+01CE:  MOVWF  05
+....................    ENABLE_INTERRUPTS(INT_TIMER0); 
+01CF:  BCF    03.5
+01D0:  BSF    0B.5
+....................    ENABLE_INTERRUPTS(INT_TIMER1); 
+01D1:  BSF    03.5
+01D2:  BSF    0C.0
+....................    ENABLE_INTERRUPTS(INT_EXT); 
+01D3:  BCF    03.5
+01D4:  BSF    0B.4
+....................    ENABLE_INTERRUPTS(GLOBAL); 
+01D5:  MOVLW  C0
+01D6:  IORWF  0B,F
+....................    EXT_INT_EDGE(H_TO_L); 
+01D7:  BSF    03.5
+01D8:  BCF    01.6
+....................    SETUP_TIMER_0 (RTCC_INTERNAL|RTCC_DIV_16); 
+01D9:  MOVF   01,W
+01DA:  ANDLW  C0
+01DB:  IORLW  03
+01DC:  MOVWF  01
+....................    SETUP_TIMER_1 (T1_INTERNAL|T1_DIV_BY_4); 
+01DD:  MOVLW  A5
+01DE:  BCF    03.5
+01DF:  MOVWF  10
+....................    SET_TIMER0(131); 
+01E0:  MOVLW  83
+01E1:  MOVWF  01
+....................    SET_TIMER1(3036);  
+01E2:  MOVLW  0B
+01E3:  MOVWF  0F
+01E4:  MOVLW  DC
+01E5:  MOVWF  0E
+....................     
+....................  while (true) 
+....................  { 
+....................    //Programa Principal 
+....................     while (suma==1) 
+....................     { 
+01E6:  DECFSZ 41,W
+01E7:  GOTO   1EA
+....................     jueguembler(); 
+01E8:  GOTO   0AB
+....................     } 
+01E9:  GOTO   1E6
+....................      
+....................    //INGRESO DE LA HORA PARA ARRANCAR EL PROGRAMA 
+....................      
+....................     while (cont == 0) 
+....................     { 
+01EA:  MOVF   39,F
+01EB:  BTFSS  03.2
+01EC:  GOTO   201
+....................     if (input(pin_b1)==0) 
+01ED:  BTFSC  06.1
+01EE:  GOTO   1F8
+....................      { 
+....................      horas++; 
+01EF:  INCF   30,F
+....................      delay_ms(150); 
+01F0:  MOVLW  96
+01F1:  MOVWF  45
+01F2:  CALL   096
+....................      if (horas == 24) 
+01F3:  MOVF   30,W
+01F4:  SUBLW  18
+01F5:  BTFSS  03.2
+01F6:  GOTO   1F8
+....................       { 
+....................       horas = 0; 
+01F7:  CLRF   30
+....................       } 
+....................      } 
+....................      if (input(pin_b2)==0) 
+01F8:  BTFSC  06.2
+01F9:  GOTO   1FF
+....................      {  
+....................      cont=cont+1; 
+01FA:  MOVLW  01
+01FB:  ADDWF  39,F
+....................      delay_ms(150); 
+01FC:  MOVLW  96
+01FD:  MOVWF  45
+01FE:  CALL   096
+....................      } 
+....................      multiplexacion(); 
+01FF:  CALL   134
+....................     } 
+0200:  GOTO   1EA
+....................     
+....................    while (cont == 1) 
+....................     { 
+0201:  DECFSZ 39,W
+0202:  GOTO   216
+....................     if (input(pin_b1)==0) 
+0203:  BTFSC  06.1
+0204:  GOTO   20E
+....................      { 
+....................      min++; 
+0205:  INCF   2F,F
+....................      delay_ms(150); 
+0206:  MOVLW  96
+0207:  MOVWF  45
+0208:  CALL   096
+....................       
+....................      if (min == 60) 
+0209:  MOVF   2F,W
+020A:  SUBLW  3C
+020B:  BTFSS  03.2
+020C:  GOTO   20E
+....................       { 
+....................       min=0; 
+020D:  CLRF   2F
+....................       } 
+....................      } 
+....................       
+....................      if (input(pin_b2)==0) 
+020E:  BTFSC  06.2
+020F:  GOTO   214
+....................      {  
+....................      cont++; 
+0210:  INCF   39,F
+....................      delay_ms(150); 
+0211:  MOVLW  96
+0212:  MOVWF  45
+0213:  CALL   096
+....................      } 
+....................      multiplexacion(); 
+0214:  CALL   134
+....................     }  
+0215:  GOTO   201
+....................     //SETEO DE LA ALARMA 
+....................    while (cont == 3) 
+....................     { 
+0216:  MOVF   39,W
+0217:  SUBLW  03
+0218:  BTFSS  03.2
+0219:  GOTO   22D
+....................     if (input(pin_b1)==0) 
+021A:  BTFSC  06.1
+021B:  GOTO   225
+....................      { 
+....................      horas3++; 
+021C:  INCF   3A,F
+....................      delay_ms(150); 
+021D:  MOVLW  96
+021E:  MOVWF  45
+021F:  CALL   096
+....................      if (horas3 == 24) 
+0220:  MOVF   3A,W
+0221:  SUBLW  18
+0222:  BTFSS  03.2
+0223:  GOTO   225
+....................       { 
+....................       horas3 = 0; 
+0224:  CLRF   3A
+....................       } 
+....................      } 
+....................      if (input(pin_b2)==0) 
+0225:  BTFSC  06.2
+0226:  GOTO   22B
+....................      {  
+....................      cont++; 
+0227:  INCF   39,F
+....................      delay_ms(200); 
+0228:  MOVLW  C8
+0229:  MOVWF  45
+022A:  CALL   096
+....................      } 
+....................      multiplexacion2(); 
+022B:  CALL   172
+....................     } 
+022C:  GOTO   216
+....................     
+....................    while (cont == 4) 
+....................     { 
+022D:  MOVF   39,W
+022E:  SUBLW  04
+022F:  BTFSS  03.2
+0230:  GOTO   244
+....................     if (input(pin_b1)==0) 
+0231:  BTFSC  06.1
+0232:  GOTO   23C
+....................      { 
+....................      min3++; 
+0233:  INCF   3B,F
+....................      delay_ms(150); 
+0234:  MOVLW  96
+0235:  MOVWF  45
+0236:  CALL   096
+....................      if (min3 == 60) 
+0237:  MOVF   3B,W
+0238:  SUBLW  3C
+0239:  BTFSS  03.2
+023A:  GOTO   23C
+....................       { 
+....................       min3=0; 
+023B:  CLRF   3B
+....................       } 
+....................      } 
+....................      if (input(pin_b2)==0) 
+023C:  BTFSC  06.2
+023D:  GOTO   242
+....................      {  
+....................      cont++; 
+023E:  INCF   39,F
+....................      delay_ms(200); 
+023F:  MOVLW  C8
+0240:  MOVWF  45
+0241:  CALL   096
+....................      } 
+....................      multiplexacion2(); 
+0242:  CALL   172
+....................     }  
+0243:  GOTO   22D
+....................     //PROGRAMA ACTIVO 
+....................     multiplexacion(); 
+0244:  CALL   134
+....................          
+....................     if (input(pin_b2)==0) 
+0245:  BTFSC  06.2
+0246:  GOTO   24B
+....................      {  
+....................      cont++; 
+0247:  INCF   39,F
+....................      delay_ms(200); 
+0248:  MOVLW  C8
+0249:  MOVWF  45
+024A:  CALL   096
+....................      } 
+....................     
+....................    if (cont == 5) 
+024B:  MOVF   39,W
+024C:  SUBLW  05
+024D:  BTFSS  03.2
+024E:  GOTO   251
+....................      { 
+....................      cont=2; 
+024F:  MOVLW  02
+0250:  MOVWF  39
+....................      } 
+....................     
+....................   //ALARMA 
+....................   if (min==min3 && horas==horas3) 
+0251:  MOVF   3B,W
+0252:  SUBWF  2F,W
+0253:  BTFSS  03.2
+0254:  GOTO   266
+0255:  MOVF   3A,W
+0256:  SUBWF  30,W
+0257:  BTFSS  03.2
+0258:  GOTO   266
+....................      { 
+....................      output_toggle(pin_a1); 
+0259:  MOVLW  02
+025A:  XORWF  05,F
+....................      delay_ms(500); 
+025B:  MOVWF  44
+025C:  MOVLW  FA
+025D:  MOVWF  45
+025E:  CALL   096
+025F:  DECFSZ 44,F
+0260:  GOTO   25C
+....................       if (input(pin_b4)==0) 
+0261:  BTFSC  06.4
+0262:  GOTO   266
+....................       { 
+....................        output_low(pin_a1); 
+0263:  BCF    05.1
+....................        horas3=0; 
+0264:  CLRF   3A
+....................        min3=0; 
+0265:  CLRF   3B
+....................       } 
+....................      } 
+....................  } 
+0266:  GOTO   1E6
+.................... } 
+0267:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F71   XT NOWDT PUT NODEBUG NOPROTECT BROWNOUT NOLVP NOCPD NOWRT

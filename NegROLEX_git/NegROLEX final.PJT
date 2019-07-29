@@ -1,0 +1,40 @@
+[PROJECT]
+Target=NegROLEX final.HEX
+Development_Mode=2
+Processor=0x873A
+ToolSuite=CCS
+Processor_Text=PIC16F873A
+
+[Directories]
+Include=
+Library=
+LinkerScript=
+
+[Target Data]
+FileList=C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.c
+BuildTool=C-COMPILER
+OptionString=+FM
+AdditionalOptionString=
+BuildRequired=1
+
+[NegROLEX final.c]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+
+[mru-list]
+1=NEGROL~1.C
+
+[Windows]
+0=0000 NEGROL~1.C 0 0 796 451 3 0
+
+[Opened Files]
+1=C:\Users\galle_000\Desktop\DEFINITIVO\NegROLEX final.c
+2=
+[Units]
+Count=1
+1=NegROLEX final.c (main)
+Link=0
